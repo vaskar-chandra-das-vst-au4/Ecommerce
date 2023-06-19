@@ -61,3 +61,17 @@ exports.deleteProduct = catchAsync(async (req, res, next) => {
   if (!product) return next(new AppError('Product ID does not exist!', 404));
   sendRes(res, 204);
 });
+
+// ! Create and update review
+exports.createPdtReview = catchAsync(async (req, res, next) => {
+  const { name, rating, comment, productId } = req.body;
+
+  const review = {
+    user: req.user._id,
+    name,
+    rating: Number(rating),
+    comment,
+  };
+
+  const pdt = await Product.findById(productId);
+});

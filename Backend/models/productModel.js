@@ -18,7 +18,6 @@ const productSchema = new mongoose.Schema({
   rating: {
     type: Number,
     default: 0,
-    max: [5, 'Rating must be less or equal to 5'],
   },
   images: [
     {
@@ -49,6 +48,11 @@ const productSchema = new mongoose.Schema({
   },
   reviews: [
     {
+      user: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+        required: [true, 'User id is needed'],
+      },
       name: {
         type: String,
         required: [true, 'Reviewer name is needed!'],
@@ -56,8 +60,6 @@ const productSchema = new mongoose.Schema({
       rating: {
         type: Number,
         required: [true, 'Rating is needed!'],
-        min: [1, 'Rating must be greater or equal to 1'],
-        max: [5, 'Rating must be less or equal to 5'],
       },
       comment: {
         type: String,
