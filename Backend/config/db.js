@@ -11,8 +11,6 @@ exports.connectDatabase = () => {
       useCreateIndex: true,
     })
     .then(data => {
-      console.log(
-        `DB connected Established Successfully at ${data.connection.host}`
-      );
+      console.log(`Database connection established successfully at ${data.connection.host}`);
     });
 };

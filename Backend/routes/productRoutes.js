@@ -1,4 +1,5 @@
 const express = require('express');
+const { isAuthenticated, authorizedRoles } = require('../middlewares/auth');
 const {
   getAllProducts,
   createProduct,
@@ -9,7 +10,13 @@ const {
 
 const router = express.Router();
 
-router.route('/').get(getAllProducts).post(createProduct);
-router.route('/:id').get(getProduct).patch(updateProduct).delete(deleteProduct);
+// ! Public routes
+router.route('/').get(getAllProducts);
+router.route('/:id').get(getProduct);
+
+// ! Admin Routes
+router.use(isAuthenticated, authorizedRoles('admin'));
+router.route('/admin').post(createProduct);
+router.route('/admin/:id').patch(updateProduct).delete(deleteProduct);
 
 module.exports = router;

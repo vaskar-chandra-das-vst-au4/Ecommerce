@@ -15,6 +15,7 @@ const sendRes = (res, statusCode, data, status = true) => {
 
 //! Create a product -- Admin
 exports.createProduct = catchAsync(async (req, res, next) => {
+  req.body.addedBy = req.user.id;
   const product = await Product.create(req.body);
   return sendRes(res, 201, product);
 });
@@ -23,11 +24,7 @@ exports.getAllProducts = catchAsync(async (req, res, next) => {
   //   const products = await Product.find();
   const totalPdtCount = await Product.countDocuments();
 
-  const features = new APIFeatures(Product.find(), req.query)
-    .search()
-    .filter()
-    .paginate()
-    .limitFields();
+  const features = new APIFeatures(Product.find(), req.query).search().filter().paginate().limitFields();
   const products = await features.query;
 
   return res.status(201).json({

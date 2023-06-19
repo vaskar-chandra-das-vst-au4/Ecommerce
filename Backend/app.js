@@ -1,13 +1,16 @@
 const bodyParser = require('body-parser');
 const express = require('express');
 const morgan = require('morgan');
+const cookieParser = require('cookie-parser');
 const productRouter = require('./routes/productRoutes');
 const userRouter = require('./routes/userRoutes');
 const globalErrorController = require('./controllers/globalErrorController');
+const AppError = require('./utils/appError');
 
 //! App and body parser
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
 
 //! Morgan
 console.log(`App is in ${process.env.NODE_ENV}⚙`);
@@ -19,12 +22,7 @@ app.use('/api/v1/products', productRouter);
 app.use('/api/v1/users', userRouter);
 
 //! Undefined Routes
-
-app.use('*', (req, res, next) => {
-  let err = new Error('Page not found');
-  err.status = 'fail';
-  next(err);
-});
+app.use('*', (req, res, next) => next(new AppError('Requested resource not found ˙◠˙ ', 404)));
 
 //! Global Error handler
 app.use(globalErrorController);

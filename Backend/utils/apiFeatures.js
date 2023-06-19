@@ -25,10 +25,7 @@ class APIFeatures {
     excludedFields.forEach(keyWord => delete queryStringCopy[keyWord]);
     //  console.log(queryStringCopy);
     let formattedStr = JSON.stringify(queryStringCopy);
-    formattedStr = formattedStr.replace(
-      /\b(gte|gt|lte|lt)\b/g,
-      match => `$${match}`
-    );
+    formattedStr = formattedStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
     // console.log('hello', JSON.parse(formattedStr));
     this.query = this.query.find(JSON.parse(formattedStr));
     return this;
