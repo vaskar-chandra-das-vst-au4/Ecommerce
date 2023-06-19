@@ -1,5 +1,5 @@
 const path = require('path');
-const { connectDatabase } = require('./config/db');
+const { connectDatabase } = require('./db');
 const dotenv = require('dotenv');
 
 // console.log(__dirname);
@@ -10,7 +10,7 @@ const dotenv = require('dotenv');
 
 // dotenv.config({ path: path.resolve(__dirname, './config/config.env') });
 // dotenv.config({ path: 'Backend/config/config.env' });
-dotenv.config({ path: `${__dirname}/config/config.env` });
+dotenv.config({ path: `${__dirname}/config.env` });
 
 //! Uncaught Exceptions
 process.on('uncaughtException', err => {
