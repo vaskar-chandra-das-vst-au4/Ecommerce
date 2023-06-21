@@ -11,6 +11,7 @@ const dotenv = require('dotenv');
 // dotenv.config({ path: path.resolve(__dirname, './config/config.env') });
 // dotenv.config({ path: 'Backend/config/config.env' });
 dotenv.config({ path: `${__dirname}/config.env` });
+// dotenv.config({ path: `./config.env` });
 
 //! Uncaught Exceptions
 process.on('uncaughtException', err => {

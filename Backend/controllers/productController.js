@@ -102,6 +102,7 @@ exports.createPdtReview = catchAsync(async (req, res, next) => {
 
 // ! Get all reviews against a single product
 exports.getAllReviewForAProduct = catchAsync(async (req, res, next) => {
+  console.log('req.query.pdtId 12', req.query.pdtId);
   const product = await Product.findById(req.query.pdtId);
   if (!product) return next(new AppError('No product found', 404));
 
@@ -114,19 +115,32 @@ exports.getAllReviewForAProduct = catchAsync(async (req, res, next) => {
 
 // ! Delete a review
 exports.deleteReview = catchAsync(async (req, res, next) => {
-  const product = await Product.findById(req.query.pdtId);
+  console.log('req.query.pdtId', req.query.pdtId, req.query.reviewId);
+  let pdtId = req.query.pdtId;
+  let reviewId = req.query.reviewId;
+
+  const product = await Product.findById(pdtId);
   if (!product) return next(new AppError('No product found', 404));
 
-  const reviews = product.reviews.filter(item => item._id.toString() !== req.query.reviewId);
+  const reviews = product.reviews.filter(item => item._id.toString() !== reviewId);
   const totalReviews = reviews.length;
-  const avgRating = reviews.reduce((acc, item) => item.rating + acc, 0) / reviews.length;
-  // console.log(reviews, totalReviews, avgRating);
-  const update = { reviews, totalReviews, avgRating };
 
-  await Product.findByIdAndUpdate(req.query.pdtId, update, {
-    new: true,
-    runValidators: true,
-    useFindAndModify: false,
+  const avgRating = reviews.reduce((acc, item) => item.rating + acc, 0) / reviews.length || 0;
+  // console.log(reviews, totalReviews, avgRating);
+  // console.log(
+  //   'TOTAL',
+  //   reviews.reduce((acc, item) => item.rating + acc, 0),
+  //   reviews.length,
+  //   product.reviews,
+  //   reviews,
+  //   avgRating
+  // );
+  const update = { reviews, totalReviews, avgRating: avgRating };
+
+  await Product.findByIdAndUpdate(pdtId, update, {
+    // new: true,
+    // runValidators: true,
+    // useFindAndModify: false,
   });
 
   res.status(204).json({
