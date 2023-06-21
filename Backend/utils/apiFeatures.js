@@ -19,7 +19,7 @@ class APIFeatures {
   }
 
   filter() {
-    //  console.log(this.queryString);
+    // console.log(this.queryString.page);
     const queryStringCopy = { ...this.queryString };
     const excludedFields = ['sort', 'page', 'limit', 'fields', 'keyword']; // Thse fields must be excluded from query string
     excludedFields.forEach(keyWord => delete queryStringCopy[keyWord]);

@@ -3,6 +3,7 @@ const Product = require('../models/productModel');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 const APIFeatures = require('../utils/apiFeatures');
+const mongoose = require('mongoose');
 
 //~ Json object
 const sendRes = (res, statusCode, data, status = true) => {
@@ -19,6 +20,7 @@ exports.createProduct = catchAsync(async (req, res, next) => {
   const product = await Product.create(req.body);
   return sendRes(res, 201, product);
 });
+
 //! Get all products
 exports.getAllProducts = catchAsync(async (req, res, next) => {
   //   const products = await Product.find();
@@ -66,12 +68,69 @@ exports.deleteProduct = catchAsync(async (req, res, next) => {
 exports.createPdtReview = catchAsync(async (req, res, next) => {
   const { name, rating, comment, productId } = req.body;
 
-  const review = {
+  const newReview = {
     user: req.user._id,
     name,
     rating: Number(rating),
     comment,
   };
 
-  const pdt = await Product.findById(productId);
+  const product = await Product.findById(productId);
+
+  const isAlreadyReviewed = product.reviews.some(item => item.user.toString() === req.user._id.toString());
+
+  if (isAlreadyReviewed) {
+    product.reviews.forEach(item => {
+      if (item.user.toString() === req.user._id.toString()) {
+        item.rating = Number(rating);
+        item.comment = comment;
+      }
+    });
+  } else {
+    product.reviews.push(newReview);
+    product.totalReviews = product.reviews.length;
+  }
+
+  product.avgRating = product.reviews.reduce((acc, item) => item.rating + acc, 0) / product.reviews.length;
+
+  await product.save();
+  res.status(200).json({
+    status: true,
+    message: 'Review added successfully',
+  });
+});
+
+// ! Get all reviews against a single product
+exports.getAllReviewForAProduct = catchAsync(async (req, res, next) => {
+  const product = await Product.findById(req.query.pdtId);
+  if (!product) return next(new AppError('No product found', 404));
+
+  res.status(200).json({
+    status: true,
+    message: 'Reviews fetched successfully',
+    reviews: product.reviews,
+  });
+});
+
+// ! Delete a review
+exports.deleteReview = catchAsync(async (req, res, next) => {
+  const product = await Product.findById(req.query.pdtId);
+  if (!product) return next(new AppError('No product found', 404));
+
+  const reviews = product.reviews.filter(item => item._id.toString() !== req.query.reviewId);
+  const totalReviews = reviews.length;
+  const avgRating = reviews.reduce((acc, item) => item.rating + acc, 0) / reviews.length;
+  // console.log(reviews, totalReviews, avgRating);
+  const update = { reviews, totalReviews, avgRating };
+
+  await Product.findByIdAndUpdate(req.query.pdtId, update, {
+    new: true,
+    runValidators: true,
+    useFindAndModify: false,
+  });
+
+  res.status(204).json({
+    status: true,
+    message: 'Review deleted successfully',
+  });
 });

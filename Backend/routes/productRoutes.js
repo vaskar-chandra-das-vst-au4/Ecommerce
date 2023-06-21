@@ -6,13 +6,21 @@ const {
   updateProduct,
   deleteProduct,
   getProduct,
+  createPdtReview,
+  getAllReviewForAProduct,
+  deleteReview,
 } = require('../controllers/productController');
 
 const router = express.Router();
 
-// ! Public routes
-router.route('/').get(getAllProducts);
-router.route('/:id').get(getProduct);
+router.get('/', getAllProducts);
+router.get('/productId/:id', getProduct);
+
+router
+  .route('/reviews')
+  .get(getAllReviewForAProduct)
+  .patch(isAuthenticated, createPdtReview)
+  .delete(isAuthenticated, deleteReview);
 
 // ! Admin Routes
 router.use(isAuthenticated, authorizedRoles('admin'));
