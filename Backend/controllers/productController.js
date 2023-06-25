@@ -4,6 +4,7 @@ const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 const APIFeatures = require('../utils/apiFeatures');
 const mongoose = require('mongoose');
+const Review = require('../models/reviewModel');
 
 //~ Json object
 const sendRes = (res, statusCode, data, status = true) => {
@@ -65,6 +66,8 @@ exports.updateProduct = catchAsync(async (req, res, next) => {
 exports.deleteProduct = catchAsync(async (req, res, next) => {
   const product = await Product.findByIdAndDelete(req.params.id);
   if (!product) return next(new AppError('Product ID does not exist!', 404));
+  await Review.deleteMany({ productId: req.params.id });
+
   sendRes(res, 204);
 });
 
