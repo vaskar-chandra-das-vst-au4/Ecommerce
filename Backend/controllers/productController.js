@@ -102,7 +102,7 @@ exports.createPdtReview = catchAsync(async (req, res, next) => {
 
 // ! Get all reviews against a single product
 exports.getAllReviewForAProduct = catchAsync(async (req, res, next) => {
-  console.log('req.query.pdtId 12', req.query.pdtId);
+  // console.log('req.query.pdtId 12', req.query.pdtId);
   const product = await Product.findById(req.query.pdtId);
   if (!product) return next(new AppError('No product found', 404));
 

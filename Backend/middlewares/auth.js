@@ -14,8 +14,12 @@ exports.isAuthenticated = catchAsync(async (req, res, next) => {
 
   // console.log('TOKEN', token);
   const decodedData = jwt.verify(token, process.env.JWT_SECRET);
-  req.user = await User.find({ _id: decodedData.id });
-  req.user = req.user[0];
+
+  const user = await User.findById(decodedData.id);
+
+  if (!user) return next(new AppError('User not exist'));
+
+  req.user = user;
   next();
 });
 

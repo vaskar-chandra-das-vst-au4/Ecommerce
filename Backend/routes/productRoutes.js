@@ -13,17 +13,19 @@ const {
 
 const router = express.Router();
 
+// ! Public
 router.get('/', getAllProducts);
 router.get('/productId/:id', getProduct);
 
-router
-  .route('/reviews')
-  .get(getAllReviewForAProduct)
-  .patch(isAuthenticated, createPdtReview)
-  .delete(isAuthenticated, deleteReview);
+// router
+//   .route('/reviews')
+//   .get(getAllReviewForAProduct)
+//   .patch(isAuthenticated, createPdtReview)
+//   .delete(isAuthenticated, deleteReview);
 
-// ! Admin Routes
+//! Admin
 router.use(isAuthenticated, authorizedRoles('admin'));
+
 router.route('/admin').post(createProduct);
 router.route('/admin/:id').patch(updateProduct).delete(deleteProduct);
 
