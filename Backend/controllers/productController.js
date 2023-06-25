@@ -26,7 +26,11 @@ exports.getAllProducts = catchAsync(async (req, res, next) => {
   //   const products = await Product.find();
   const totalPdtCount = await Product.countDocuments();
 
-  const features = new APIFeatures(Product.find(), req.query).search().filter().paginate().limitFields();
+  const features = new APIFeatures(Product.find().select('-__v').populate('reviews'), req.query)
+    .search()
+    .filter()
+    .paginate()
+    .limitFields();
   const products = await features.query;
 
   return res.status(201).json({
@@ -39,7 +43,7 @@ exports.getAllProducts = catchAsync(async (req, res, next) => {
 
 //! Get a product
 exports.getProduct = catchAsync(async (req, res, next) => {
-  const product = await Product.findById(req.params.id);
+  const product = await Product.findById(req.params.id).populate('reviews').select('-__v');
   if (!product) return next(new AppError('Product not found', 404));
   sendRes(res, 200, product);
 });

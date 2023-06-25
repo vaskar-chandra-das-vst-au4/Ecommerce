@@ -1,6 +1,5 @@
 const Product = require('../models/productModel');
-const User = require('..models/userModel');
-const Review = require('../models/reviewModel');
+const User = require('../models/userModel');
 const Review = require('../models/reviewModel');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
@@ -35,7 +34,7 @@ exports.createOrUpdateReview = catchAsync(async (req, res, next) => {
 
   res.status(200).json({
     status: true,
-    data: review,
+    data: review || reviewedAlready,
   });
 });
 
@@ -83,28 +82,28 @@ exports.getAllReviews = catchAsync(async (req, res, next) => {
 
 // ! Get all reviews against a single product
 exports.getAllReviewsAgainstProduct = catchAsync(async (req, res, next) => {
-  const product = await Product.findById(req.params.pdtId);
-  if (!product) return next(new AppError('No product found', 404));
+  // const product = await Product.findById(req.params.pdtId);
+  // if (!product) return next(new AppError('No product found', 404));
 
   const reviews = await Review.find({ productId: req.params.pdtId });
 
   res.status(200).json({
     status: true,
-    message: 'Reviews fetched successfully',
+    message: `Reviews fetched successfully for a product id ${req.params.pdtId}`,
     reviews,
   });
 });
 
 // ! Get all reviews against a single user
 exports.getAllReviewsAgainstUser = catchAsync(async (req, res, next) => {
-  const user = await User.findById(req.params.userId);
-  if (!user) return next(new AppError('No user exist', 404));
+  // const user = await User.findById(req.params.userId);
+  // if (!user) return next(new AppError('No user exist', 404));
 
   const reviews = await Review.find({ userId: req.params.userId });
 
   res.status(200).json({
     status: true,
-    message: 'Reviews fetched successfully',
+    message: `Reviews fetched successfully for a  user id ${req.params.userId}`,
     reviews,
   });
 });

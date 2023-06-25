@@ -23,7 +23,7 @@ router.get('/userId/:userId', getAllReviewsAgainstUser);
 //! Admin
 router.use(authorizedRoles('admin'));
 
-router.get('/admin/', getAllReviews);
+router.get('/admin', getAllReviews);
 router.get('/admin/:reviewId', getAReview);
 
 module.exports = router;

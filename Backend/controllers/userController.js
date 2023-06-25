@@ -57,9 +57,11 @@ exports.logout = catchAsync(async (req, res, next) => {
 // @ Forgot Password
 exports.forgotPassword = catchAsync(async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email });
+
   if (!user) return next(new AppError('No user exist for the given email id.', 404));
 
   const resetToken = await user.generateResetPasswordToken();
+
   await user.save({ validateBeforeSave: false });
 
   const resetURL = `${req.protocol}://${req.get('host')}/api/v1/password/reset/${resetToken}`;
@@ -71,6 +73,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
       subject: 'User password recovery',
       message,
     });
+
     res.status(200).json({
       status: true,
       message: `Email sent to ${req.body.email} successfully`,
@@ -121,8 +124,10 @@ exports.getLoggedInUserDetails = catchAsync(async (req, res, next) => {
 // @ Update password of logged in user
 exports.updateMyPassword = catchAsync(async (req, res, next) => {
   const user = await User.findById(req.user._id).select('+password');
+
   const { oldPassword, newPassword, confirmPassword } = req.body;
-  console.log('USER', user);
+  // console.log('USER', user);
+
   const isOldPasswordMatched = await user.comparePassword(oldPassword);
   if (!isOldPasswordMatched) return next(new AppError('Old Password is incorrect'));
 
@@ -182,6 +187,7 @@ exports.getUser = catchAsync(async (req, res, next) => {
     user,
   });
 });
+
 // ! Delete user - admin
 exports.deleteUser = catchAsync(async (req, res, next) => {
   const user = await User.findByIdAndDelete(req.params.id);
