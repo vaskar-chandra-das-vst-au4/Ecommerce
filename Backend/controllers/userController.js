@@ -163,7 +163,7 @@ exports.updateProfile = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: true,
     message: 'Profile updated successfully',
-    user,
+    data: user,
   });
 });
 
@@ -173,7 +173,7 @@ exports.getAllUsers = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: true,
     message: 'Fetched all users successfully',
-    users,
+    data: users,
   });
 });
 
@@ -184,7 +184,7 @@ exports.getUser = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: true,
     message: 'User fetched successfully',
-    user,
+    data: user,
   });
 });
 

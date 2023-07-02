@@ -7,11 +7,14 @@ const mongoose = require('mongoose');
 const Review = require('../models/reviewModel');
 
 //~ Json object
-const sendRes = (res, statusCode, data, status = true) => {
+const sendRes = (res, statusCode, data, message, status = true) => {
   let jsonObj = {
     status,
-    product: data,
+    message,
+    data,
   };
+  if (!data) delete jsonObj.data;
+
   return res.status(statusCode).json(jsonObj);
 };
 
@@ -19,7 +22,7 @@ const sendRes = (res, statusCode, data, status = true) => {
 exports.createProduct = catchAsync(async (req, res, next) => {
   req.body.addedBy = req.user.id;
   const product = await Product.create(req.body);
-  return sendRes(res, 201, product);
+  return sendRes(res, 201, product, 'Product created successfully');
 });
 
 //! Get all products
@@ -36,9 +39,12 @@ exports.getAllProducts = catchAsync(async (req, res, next) => {
 
   return res.status(201).json({
     status: true,
-    totalPdtCount,
-    currentPagePdtCount: products.length,
-    products,
+    message: 'Products fetched successfully',
+    data: {
+      totalPdtCount,
+      currentPagePdtCount: products.length,
+      products,
+    },
   });
 });
 
@@ -46,7 +52,7 @@ exports.getAllProducts = catchAsync(async (req, res, next) => {
 exports.getProduct = catchAsync(async (req, res, next) => {
   const product = await Product.findById(req.params.id).populate('reviews').select('-__v');
   if (!product) return next(new AppError('Product not found', 404));
-  sendRes(res, 200, product);
+  sendRes(res, 200, product, 'Product fetched successfully');
 });
 
 //! Update a product -- Admin
@@ -59,7 +65,7 @@ exports.updateProduct = catchAsync(async (req, res, next) => {
   if (!product) return next(new AppError('Product not found', 404));
 
   // On success
-  sendRes(res, 200, product);
+  sendRes(res, 200, product, 'Product updated successfully');
 });
 
 //! Delete product -- Admin
@@ -68,7 +74,7 @@ exports.deleteProduct = catchAsync(async (req, res, next) => {
   if (!product) return next(new AppError('Product ID does not exist!', 404));
   await Review.deleteMany({ productId: req.params.id });
 
-  sendRes(res, 204);
+  sendRes(res, 204, false, 'Product deleted successfully');
 });
 
 // ! Create and update review
@@ -122,7 +128,7 @@ exports.getAllReviewForAProduct = catchAsync(async (req, res, next) => {
 
 // ! Delete a review
 exports.deleteReview = catchAsync(async (req, res, next) => {
-  console.log('req.query.pdtId', req.query.pdtId, req.query.reviewId);
+  // console.log('req.query.pdtId', req.query.pdtId, req.query.reviewId);
   let pdtId = req.query.pdtId;
   let reviewId = req.query.reviewId;
 

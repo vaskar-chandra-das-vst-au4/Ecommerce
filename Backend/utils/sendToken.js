@@ -9,8 +9,7 @@ const sendToken = (user, statusCode, res, message) => {
   const obj = {
     status: true,
     message,
-    user,
-    token,
+    data: { user, token },
   };
 
   res.status(statusCode).cookie('token', token, options).json(obj);

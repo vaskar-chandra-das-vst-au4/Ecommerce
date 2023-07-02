@@ -14,6 +14,11 @@ exports.createOrUpdateReview = catchAsync(async (req, res, next) => {
 
   if (reviewedAlready === null) {
     review = await Review.create({ userId, productId, name, rating, comment });
+    // .populate({
+    //   path: 'userId',
+    //   select: 'name email',
+    // })
+    // .populate({ path: 'productId', select: 'name price' });
   } else {
     reviewedAlready.rating = rating;
     await reviewedAlready.save();
@@ -76,7 +81,7 @@ exports.getAllReviews = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: true,
     message: 'Reviews fetched successfully',
-    reviews,
+    data: reviews,
   });
 });
 
@@ -90,7 +95,7 @@ exports.getAllReviewsAgainstProduct = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: true,
     message: `Reviews fetched successfully for a product id ${req.params.pdtId}`,
-    reviews,
+    data: reviews,
   });
 });
 
@@ -104,7 +109,7 @@ exports.getAllReviewsAgainstUser = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: true,
     message: `Reviews fetched successfully for a  user id ${req.params.userId}`,
-    reviews,
+    data: reviews,
   });
 });
 
@@ -116,6 +121,6 @@ exports.getAReview = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: true,
     message: 'Review fetched successfully',
-    review,
+    data: review,
   });
 });
