@@ -1,5 +1,5 @@
 const express = require('express');
-const { isAuthenticated, authorizedRoles } = require('../middlewares/auth');
+const { isAuthenticated, authorizedRoles } = require('../controllers/authController');
 const {
   getAllProducts,
   createProduct,
